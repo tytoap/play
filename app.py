@@ -19,10 +19,16 @@ DOWNLOAD_FOLDER = 'downloads'
 # Função para obter o link de download
 def get_video_download_link(url):
     try:
-        
-        yt = YouTube(url, on_progress_callback=on_progress, use_po_token=True)
         visitor_data = 'CgtUdWJWZ0xoNEdyWSiA68a6BjIKCgJCUhIEGgAgHw%3D%3D'
         po_token = 'MnRCjSW2EGRxM0K16T90u8fk3tKGno-iEYDcOe-c6jcGrEE7nvXljT0pCP9BCE_ueXkXY-JeEfwn2l3_J6W4wjo-NX_KkPCLo0kk-hZTA9_6fIUe3p1OHBTP7DyZXkCt0Mf0GIIufirsiKSSvWvYP7HmiBgJaQ=='
+
+        
+        yt = YouTube(url, on_progress_callback=on_progress, use_po_token=True)
+         # Injetando os tokens diretamente após criação
+        yt._visitor_data = visitor_data
+        yt._po_token = po_token
+
+
 
         streams = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc()
         if streams:
