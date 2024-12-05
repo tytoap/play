@@ -17,8 +17,8 @@ DOWNLOAD_FOLDER = 'downloads'
  
 # Função que retorna os tokens
 def po_token_verifier():
-    visitor_data = 'CgtUdWJWZ0xoNEdyWSiA68a6BjIKCgJCUhIEGgAgHw%3D%3D'
-    po_token = 'MnRCjSW2EGRxM0K16T90u8fk3tKGno-iEYDcOe-c6jcGrEE7nvXljT0pCP9BCE_ueXkXY-JeEfwn2l3_J6W4wjo-NX_KkPCLo0kk-hZTA9_6fIUe3p1OHBTP7DyZXkCt0Mf0GIIufirsiKSSvWvYP7HmiBgJaQ=='
+    visitor_data = 'Cgs0NDk3X3JuQ3dXRSjA7ce6BjIKCgJVUxIEGgAgUg%3D%3D'
+    po_token = 'MnQfHXPos4uGvx8l4nZ3q5e4UTt-QGcuTlmNC7jpmD3izByLZyWwOxBqb3kgv4__rQQ6vZ9v1mRNq8VW9tjYJplV7VegiqppqQ56lo1Jq3VNRNui7DwUC4eo3fLlBSxC8akQW0Ffh1NScJm7LF0g4hqHb8c1ew=='
     return visitor_data, po_token
 
 # Função para obter o link de download
