@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baixar Vídeo</title>
+</head>
+<body>
+    <h1>Baixe ou Assista ao Vídeo {{url}}</h1>
+    
+    <form action="/download_video" method="POST">
+        <input type="hidden" name="url" value="{{ video_url }}">
+        <button type="submit">Baixar Vídeo</button>
+    </form>
+
+    <h2>Player de Vídeo</h2>
+    {% if download_link %}
+        <video controls width="640" height="360">
+            <source src="{{ download_link }}" type="video/mp4">
+            Seu navegador não suporta a tag de vídeo.
+        </video>
+    {% else %}
+        <p>O vídeo ainda não está disponível para reprodução.</p>
+    {% endif %}
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pesquisar e Reproduzir Vídeos</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            background-color: #121212;
+            color: white;
+            display: flex;
+        }
+
+        #sidebar {
+            width: 20%;
+            background-color: #181818;
+            padding: 10px;
+            overflow-y: auto;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #main-content {
+            width: 80%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 20px;
+        }
+
+        #main-video {
+            background-color: #282828;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .video-thumbnail {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: white;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .video-thumbnail img {
+            width: 50px;
+            height: 50px;
+            border-radius: 5px;
+        }
+
+        .video-thumbnail:hover {
+            background-color: #333;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        button {
+            background-color: #1db954;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #1ed760;
+        }
+
+        video {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        #search-section {
+            margin-bottom: 20px;
+        }
+
+        #search-input {
+            width: calc(100% - 20px);
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <div id="search-section">
+            <h2>Pesquisar Vídeos</h2>
+            <form id="search-form">
+                <input type="text" id="search-input" name="query" placeholder="Pesquisar vídeos" required>
+                <button type="submit">Pesquisar</button>
+            </form>
+        </div>
+        <h2>Minhas Playlists</h2>
+        <!-- Vídeos serão carregados aqui -->
+    </div>
+
+    <div id="main-content">
+        <div id="main-video">
+            <h2>Selecione um vídeo para assistir</h2>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('search-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const formData = new FormData(event.target);
+            const sidebar = document.getElementById('sidebar');
+            const mainVideo = document.getElementById('main-video');
+            sidebar.innerHTML = document.getElementById('search-section').outerHTML;
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/search', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const videos = await response.json();
+
+                if (videos.length === 0) {
+                    sidebar.innerHTML += '<p>Nenhum resultado encontrado.</p>';
+                    return;
+                }
+
+                videos.forEach(video => {
+                    const videoElement = document.createElement('div');
+                    videoElement.innerHTML = `
+                        <a href="#" class="video-thumbnail" data-url="${video.url}">
+                            <img src="${video.thumbnail}" alt="${video.title}">
+                            <span>${video.title}</span>
+                        </a>
+                    `;
+                    sidebar.appendChild(videoElement);
+                });
+
+                document.querySelectorAll('.video-thumbnail').forEach(thumb => {
+                    thumb.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        const videoUrl = thumb.getAttribute('data-url');
+                        const formData = new FormData();
+                        formData.append('url', videoUrl);
+
+                        try {
+                            const submitResponse = await fetch('/submit', {
+                                method: 'POST',
+                                body: formData
+                            });
+
+                            if (submitResponse.ok) {
+                                const result = await submitResponse.json();
+                                mainVideo.innerHTML = `
+                                    <h2>${result.title}</h2>
+                                    <video id="video-player" controls autoplay>
+                                        <source src="${result.stream_url}" type="video/mp4">
+                                    </video>
+                                    <button onclick="downloadVideo('${videoUrl}')">Baixar Vídeo</button>
+                                `;
+                            }
+                        } catch (error) {
+                            console.error('Erro na solicitação:', error);
+                        }
+                    });
+                });
+            } catch (error) {
+                console.error('Erro ao buscar vídeos:', error);
+            }
+        });
+
+        function downloadVideo(url) {
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'video.mp4';
+            link.click();
+        }
+    </script>
+</body>
+</html>
