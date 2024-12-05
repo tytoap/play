@@ -1,9 +1,11 @@
 from flask import Flask, render_template, request, redirect, url_for, send_file, jsonify, session
-from pytubefix import YouTube
+from pytubefix import YouTube 
 from pytubefix.cli import on_progress
 import os
 from flask_cors import CORS
 import requests
+
+ 
 
 app = Flask(__name__)
 
@@ -12,14 +14,16 @@ CORS(app)
 app.secret_key = 'sua_chave_secreta'  # Necessária para usar sessões
 
 DOWNLOAD_FOLDER = 'downloads'
+ 
 
 # Função para obter o link de download
 def get_video_download_link(url):
     try:
+        
+        yt = YouTube(url, on_progress_callback=on_progress, use_po_token=True)
         visitor_data = 'CgtUdWJWZ0xoNEdyWSiA68a6BjIKCgJCUhIEGgAgHw%3D%3D'
         po_token = 'MnRCjSW2EGRxM0K16T90u8fk3tKGno-iEYDcOe-c6jcGrEE7nvXljT0pCP9BCE_ueXkXY-JeEfwn2l3_J6W4wjo-NX_KkPCLo0kk-hZTA9_6fIUe3p1OHBTP7DyZXkCt0Mf0GIIufirsiKSSvWvYP7HmiBgJaQ=='
 
-        yt = YouTube(url, visitor_data=visitor_data, po_token=po_token)
         streams = yt.streams.filter(progressive=True, file_extension='mp4').order_by('resolution').desc()
         if streams:
             best_stream = streams.first()
@@ -76,8 +80,9 @@ def search():
 # Rota para receber a URL do vídeo
 @app.route('/submit', methods=['POST'])
 def submit_video():
-    data = request.form
-    video_url = data.get('url')
+    #data = request.form
+    #video_url = data.get('url')
+    video_url = request.form.get('url')
 
     if not video_url:
         return jsonify({'error': 'No URL provided'}), 400
