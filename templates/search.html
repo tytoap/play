@@ -116,7 +116,7 @@
             sidebar.innerHTML = document.getElementById('search-section').outerHTML;
 
             try {
-                const response = await fetch('http://127.0.0.1:5000/search', {
+                const response = await fetch('/search', {
                     method: 'POST',
                     body: formData
                 });
